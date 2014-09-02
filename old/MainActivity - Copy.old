@@ -1,0 +1,215 @@
+package com.zima.vfcontactsspeedtester;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+ 
+import android.app.Activity;
+import android.app.Dialog;
+import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class MainActivity extends Activity implements OnClickListener {
+	
+    ProgressBar pb;
+    Dialog dialog;
+    int downloadedSize = 0;
+    int totalSize = 0;
+    TextView cur_val;
+    ArrayList<Thread> trlist = new ArrayList<Thread>();
+    private Thread tr;
+    long initialTime;
+    long endTime;
+    long timeSpent;
+    String timeSpentstr;
+    TextView textms;
+    private Button buttonStartTest;
+    
+
+    String file_test10mb = "http://staging.adressbuch.vodafone.de/nettst/test10mb.dat";
+    String file_test5mb = "http://staging.adressbuch.vodafone.de/nettst/test5mb.dat";
+    String file_test2mb = "http://staging.adressbuch.vodafone.de/nettst/test2mb.dat";
+    String file_test1mb = "http://staging.adressbuch.vodafone.de/nettst/test1mb.dat";
+    String file_test512kb = "http://staging.adressbuch.vodafone.de/nettst/test512kb.dat";
+    String file_test256kb = "http://staging.adressbuch.vodafone.de/nettst/test256kb.dat";
+    String file_test128kb = "http://staging.adressbuch.vodafone.de/nettst/test128kb.dat";
+    String file_test64kb = "http://staging.adressbuch.vodafone.de/nettst/test64kb.dat";
+    String file_test32kb = "http://staging.adressbuch.vodafone.de/nettst/test32kb.dat";
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        textms = (TextView) findViewById(R.id.timespent);
+        buttonStartTest = (Button) findViewById(R.id.b1);
+        buttonStartTest.setOnClickListener(this);
+    }
+    
+   // b.setOnClickListener(new OnClickListener() {    });
+    
+	@Override
+	public void onClick(View view) {
+        	
+		showProgress(file_test512kb);
+		Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				try {
+					downloadFile(file_test512kb);
+					textms.setText(""+timeSpentstr + " ms spent");
+				} catch (Exception e) {
+					showError("Error : IOException " + e);
+					e.printStackTrace();
+				}	
+			}
+		};
+		tr = new Thread(runnable);
+		trlist.add(tr);
+		tr.start();
+		//textms.setText(""+timeSpentstr + " ms spent");
+	}
+
+    
+    void downloadFile(String urlToDownload){     
+        try {
+            //set the path where we want to save the file           
+            File SDCardRoot = Environment.getExternalStorageDirectory(); 
+            //create a new file, to save the downloaded file 
+            File file = new File(SDCardRoot,"speedtest.file");
+            FileOutputStream fileOutput = new FileOutputStream(file);
+            
+            URL url = new URL(urlToDownload);
+           
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:7.0.1) Gecko/20100101 Firefox/7.0.12011-10-16 20:23:00");
+            urlConnection.setDoOutput(true);
+            // get initial timestamp
+            initialTime=System.currentTimeMillis();
+            //connect
+            urlConnection.connect();
+            
+            //Stream used for reading the data from the internet
+            InputStream inputStream = urlConnection.getInputStream();
+ 
+            //this is the total size of the file which we are downloading
+            totalSize = urlConnection.getContentLength();
+            
+            runOnUiThread(new Runnable() {
+                @Override
+				public void run() {
+                    pb.setMax(totalSize);
+                }               
+            });
+             
+            //create a buffer...
+            byte[] buffer = new byte[1024];
+            int bufferLength = 0;
+ 
+            while ( (bufferLength = inputStream.read(buffer)) > 0 ) {
+            	if (Thread.interrupted() == true) {
+            		Log.v("thread", " interrupt inside cycle -> "+ tr.getName());
+            		fileOutput.close();
+                    break;
+                }
+                fileOutput.write(buffer, 0, bufferLength);
+                downloadedSize += bufferLength;
+                // update the progressbar //
+                runOnUiThread(new Runnable() {
+                    @Override
+					public void run() {
+                        pb.setProgress(downloadedSize);
+                        float per = ((float)downloadedSize/totalSize) * 100;
+                        cur_val.setText("Downloaded " + downloadedSize + "KB / " + totalSize + "KB (" + (int)per + "%)" );
+                    }
+                });
+            }
+            //close the output stream when complete //
+            
+            fileOutput.flush();
+            fileOutput.close();
+            endTime=System.currentTimeMillis();
+            dialog.dismiss();        
+            file.delete();
+            
+            timeSpent=endTime-initialTime;
+            timeSpentstr= Long.toString(timeSpent);
+            
+            Log.v("TIME",timeSpentstr + " ms spent");
+            
+            
+        } catch (final MalformedURLException e) {
+            showError("Error : MalformedURLException " + e);        
+            e.printStackTrace();
+            tr.interrupt();
+        } catch (final IOException e) {
+            showError("Error : IOException " + e);          
+            e.printStackTrace();
+            tr.interrupt();
+        }
+        catch (final Exception e) {
+            showError("Error : Please check your internet connection " + e);
+            e.printStackTrace();
+            Log.v("Thread Manager",tr.getName() + " will be interrupted");
+            tr.interrupt();
+            //Log.v("Thread Manager",tr.currentThread() + " <- Run?");
+        }       
+    }
+     
+    void showError(final String err){
+        runOnUiThread(new Runnable() {
+            @Override
+			public void run() {
+                Toast.makeText(MainActivity.this, err, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+     
+    void showProgress(String file_path){
+    	try {
+			final Button bb;
+			dialog = new Dialog(MainActivity.this);
+			dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			dialog.setContentView(R.layout.myprogressdialog);
+			dialog.setTitle("Download Progress");
+			
+			bb = (Button) dialog.findViewById(R.id.b2);
+			bb.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					showError("Stopping test");
+					Log.v("Dialog_button",tr.getName());
+					tr.interrupt(); 
+				}
+			});
+
+ 
+			TextView text = (TextView) dialog.findViewById(R.id.tv1);
+			text.setText("Testing..."); //+ file_path
+			cur_val = (TextView) dialog.findViewById(R.id.cur_pg_tv);
+			cur_val.setText("Starting download...");
+			dialog.show();
+
+			pb = (ProgressBar)dialog.findViewById(R.id.progress_bar);
+			pb.setProgress(0);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        //pb.setProgressDrawable(getResources().getDrawable(R.drawable.green_progress));
+    }
+}

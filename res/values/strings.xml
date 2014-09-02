@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Cloud &amp; Contacts Speedtester</string>
+    <string name="action_settings">Settings</string>
+    <string name="file_size_1">2MB</string>
+    <string name="file_size_2">10MB</string>
+    <string name="file_size_3">25MB</string>
+	<string name="file_size_4">80MB</string>
+	<string name="opt_Contacts">Contacts</string>
+    <string name="opt_Cloud">Cloud</string>
+	<string name="opt_Dropbox">Dropbox</string>
+</resources>

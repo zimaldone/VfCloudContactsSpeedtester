@@ -1,0 +1,147 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
+    style="@style/AppTheme"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/splash"
+    tools:context=".MainActivity" >
+
+    <Button
+        android:id="@+id/buttonRunTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="downloadFile"
+        android:text="Run Network Test"
+        tools:ignore="HardcodedText" />
+
+<!-- 	<ImageView
+	    android:id="@+id/imageView1"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:contentDescription="Contacts SpeedTester"
+	    android:scaleType="center"
+	    android:src="@drawable/ic_launcher"
+	    tools:ignore="HardcodedText" /> -->
+	 
+<!--	android:layout_toRightOf="@id/imageView1"  -->
+
+		<TextView
+		    android:id="@+id/TextTitle"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentLeft="true"
+		    android:layout_alignParentTop="true"
+		    android:layout_marginTop="9dp"
+		    android:gravity="center"
+		    android:text="Download Speed test \n Vodafone Cloud &amp; Contacts"
+		    android:textSize="16sp"
+		    android:textStyle="bold"
+		    tools:ignore="HardcodedText" />
+
+		<RadioGroup
+		    android:id="@+id/RadioProposition"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/connectivitystatus"
+		    android:layout_centerHorizontal="true"
+		    android:layout_marginTop="43dp"
+		    android:gravity="center"
+		    android:orientation="horizontal" >
+
+		    <RadioButton
+		        android:id="@+id/RadioButton_Cloud"
+		        android:checked="true"
+		        android:text="@string/opt_Cloud" />
+
+		    <RadioButton
+		        android:id="@+id/RadioButton_Dropbox"
+		        android:checked="true"
+		        android:text="@string/opt_Dropbox" />
+
+		    <RadioButton
+		        android:id="@+id/RadioButton_Contacts"
+		        android:text="@string/opt_Contacts" />
+		</RadioGroup>
+
+		<RadioGroup
+		    android:id="@+id/RadioFileSize"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/RadioProposition"
+		    android:layout_centerHorizontal="true"
+		    android:layout_marginTop="10dp"
+		    android:gravity="center"
+		    android:orientation="horizontal" >
+
+		    <RadioButton
+		        android:id="@+id/RadioButton_file_1"
+		        android:checked="true"
+		        android:text="@string/file_size_1" />
+
+		    <RadioButton
+		        android:id="@+id/RadioButton_file_2"
+		        android:text="@string/file_size_2" />
+
+		    <RadioButton
+		        android:id="@+id/RadioButton_file_3"
+		        android:text="@string/file_size_3" />
+
+		    <RadioButton
+		        android:id="@+id/RadioButton_file_4"
+		        android:text="@string/file_size_4" />
+		</RadioGroup>
+
+		<TextView
+		    android:id="@+id/TextPingCloud"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentLeft="true"
+		    android:layout_below="@+id/RadioFileSize"
+		    android:layout_marginTop="35dp"
+		    android:gravity="center"
+		    android:text="Evaluation avg time for ICMP traffic \n 0 ms"
+		    android:textStyle="bold"
+		    tools:ignore="HardcodedText" />
+
+		<TextView
+		    android:id="@+id/connectivitystatus"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentLeft="true"
+		    android:layout_below="@+id/TextTitle"
+		    android:layout_marginTop="21dp"
+		    android:gravity="center"
+		    android:text="Connection status:"
+		    android:textStyle="bold"
+		    tools:ignore="HardcodedText" />
+
+		<TextView
+		    android:id="@+id/TextTimeAvgCloud"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentLeft="true"
+		    android:layout_below="@+id/timetoestablishconnection"
+		    android:layout_marginTop="20dp"
+		    android:gravity="center"
+		    android:text="Time to execute (n) requests"
+		    android:textStyle="bold"
+		    tools:ignore="HardcodedText" />
+
+		<TextView
+		    android:id="@+id/timetoestablishconnection"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentLeft="true"
+		    android:layout_below="@+id/TextPingCloud"
+		    android:layout_marginTop="23dp"
+		    android:gravity="center"
+		    android:text="-"
+		    android:textStyle="bold"
+		    tools:ignore="HardcodedText" />
+
+</RelativeLayout>
