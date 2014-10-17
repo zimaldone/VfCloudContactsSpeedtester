@@ -58,11 +58,11 @@ public class SmapiEvent {
 			String description, String traceDestination, String protocol,
 			String url, String method, String body)
 			throws MalformedURLException {
-
+		
+		body="";
 		
 		if (typeOfevent == "request") {
-			final Event requestEvent = Event.requestEvent(description,
-					traceDestination, protocol, url, method, body);
+			final Event requestEvent = Event.requestEvent(description,traceDestination, protocol, url, method, body);
 			requestEvent.addRequestHeader("Custom Header", "Custom Value");
 			requestEvent.addResponseHeader("Custom Header", "Custom Value");
 			requestEvent.setResponse(200, 123L);
